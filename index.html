@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:mso="urn:schemas-microsoft-com:office:office" xmlns:msdt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+<head>
+<meta charset="UTF-8">
+<title>Puzzle Challenge</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f5f5f5;
+}
+
+h2 {
+    margin-top: 20px;
+}
+
+#board {
+    width: 600px;
+    height: 400px;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 3px solid #333;
+}
+
+.tile {
+    border: 1px solid #ccc;
+    background-image: url('IMGAE123.jpg'); /* ✅ your file */
+    background-size: 600px 400px; /* ✅ ensures correct alignment */
+    cursor: pointer;
+}
+
+.tile.selected {
+    border: 3px solid red;
+}
+
+#reveal {
+    display: none;
+    margin-top: 30px;
+    font-size: 20px;
+    background: white;
+    padding: 15px;
+    display-inline: block;
+    border-radius: 10px;
+}
+</style>
+
+<!--[if gte mso 9]><xml>
+<mso:CustomDocumentProperties>
+<mso:f416c62b8084a6924c1caabc0cb60db6 msdt:dt="string">Toezicht Nationale Banken &#65286; Expertise|428e4d78-1e8f-4652-a89c-ea65577018a3</mso:f416c62b8084a6924c1caabc0cb60db6>
+<mso:m2811a07b6c6fd47188d63596ada41d4 msdt:dt="string">Interne Modellen|505cbbda-2e79-4d44-a384-d764eced0536</mso:m2811a07b6c6fd47188d63596ada41d4>
+<mso:TaxCatchAll msdt:dt="string">2;#Toezicht Nationale Banken &#65286; Expertise;#1;#Interne Modellen</mso:TaxCatchAll>
+<mso:_dlc_DocId msdt:dt="string">A155-972592151-11365</mso:_dlc_DocId>
+<mso:_dlc_DocIdItemGuid msdt:dt="string">568b8d12-00fd-4af5-86b7-7d179cfe07fe</mso:_dlc_DocIdItemGuid>
+<mso:_dlc_DocIdUrl msdt:dt="string">https://dnbnl.sharepoint.com/sites/TM-InterneModellen/_layouts/15/DocIdRedir.aspx?ID=A155-972592151-11365, A155-972592151-11365</mso:_dlc_DocIdUrl>
+</mso:CustomDocumentProperties>
+</xml><![endif]-->
+</head>
+
+<body>
+
+<h2>🧩 Solve the puzzle</h2>
+
+<div id="board"></div>
+
+<div id="reveal">
+    🎉 Well done!  
+    <br><br>
+    👉 <a href="https://dnbnl.sharepoint.com/:b:/r/sites/TM-InterneModellen/DepartmentalDocuments2/IM%20activities/imday_reveal.pdf?csf=1&web=1&e=iJPLLT" target="_blank"> 
+        Click here for the next step
+    </a>
+</div>
+
+<script>
+const rows = 4;
+const cols = 4;
+const board = document.getElementById("board");
+
+let tiles = [];
+
+// create tiles
+for (let i = 0; i < rows * cols; i++) {
+    const tile = document.createElement("div");
+    tile.classList.add("tile");
+
+    let x = i % cols;
+    let y = Math.floor(i / cols);
+
+    tile.style.backgroundPosition = `-${x * 150}px -${y * 100}px`;
+    tile.dataset.correct = i;
+
+    tiles.push(tile);
+}
+
+// shuffle tiles
+tiles.sort(() => Math.random() - 0.5);
+
+// render
+tiles.forEach(t => board.appendChild(t));
+
+// click swap logic
+let selected = null;
+
+board.addEventListener("click", (e) => {
+    if (!e.target.classList.contains("tile")) return;
+
+    if (!selected) {
+        selected = e.target;
+        selected.classList.add("selected");
+    } else {
+        let second = e.target;
+
+        // swap background
+        [selected.style.backgroundPosition, second.style.backgroundPosition] =
+        [second.style.backgroundPosition, selected.style.backgroundPosition];
+
+        // swap correct index
+        [selected.dataset.correct, second.dataset.correct] =
+        [second.dataset.correct, selected.dataset.correct];
+
+        selected.classList.remove("selected");
+        selected = null;
+
+        checkSolved();
+    }
+});
+
+// check if solved
+function checkSolved() {
+    const solved = [...board.children].every((tile, index) =>
+        parseInt(tile.dataset.correct) === index
+    );
+
+    if (solved) {
+        document.getElementById("reveal").style.display = "block";
+    }
+}
+</script>
+
+</body>
+</html>
